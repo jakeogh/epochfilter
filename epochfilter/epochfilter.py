@@ -80,14 +80,16 @@ def cli(timestamps,
             ic(index, timestamp)
 
         if after:
+            acceptable_results = [decimal.Decimal('-1')]
+            if inclusive:
+                acceptable_results.append(decimal.Decimal('0'))
+            if verbose:
+                ic(acceptable_results)
             result = timestamp.compare(after)
             if verbose:
                 ic(result)
-            if result is decimal.Decimal('-1'):
+            if result not in acceptable_results:
                 continue
-            if inclusive:
-                if result is not decimal.Decimal('0'):
-                    continue
 
         if before:
             result = timestamp.compare(before)
