@@ -76,6 +76,12 @@ def cli(timestamps,
         timestamp = decimal.Decimal(timestamp)
         if verbose:
             ic(index, timestamp)
+        if after:
+            if not timestamp.compare(after):
+                continue
+
+        print(timestamp)
+
         if count:
             if count > (index + 1):
                 ic(count)
