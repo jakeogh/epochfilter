@@ -92,9 +92,15 @@ def cli(timestamps,
                 continue
 
         if before:
-            result = timestamp.compare(before)
+            acceptable_results = [decimal.Decimal('-1')]
+            if inclusive:
+                acceptable_results.append(decimal.Decimal('0'))
+            if verbose:
+                ic(acceptable_results)
+            result = timestamp.compare(after)
             if verbose:
                 ic(result)
+            if result not in acceptable_results:
                 continue
 
         print(timestamp)
