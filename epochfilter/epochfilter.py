@@ -29,9 +29,9 @@ from enumerate_input import enumerate_input
 
 
 def human_date_to_timestamp(date):
-    dt = dateparser(date)
+    dt = dateparser.parse(date)
     timestamp = dt.timestamp()
-    return decimal.Decimal(timestamp)
+    return decimal.Decimal(str(timestamp))
 
 
 @click.command()
@@ -41,10 +41,12 @@ def human_date_to_timestamp(date):
 @click.option('--count', type=str)
 @click.option('--before', type=str)
 @click.option('--after', type=str)
+@click.option("--inclusive", is_flag=True)
 @click.option("--printn", is_flag=True)
 def cli(timestamps,
         before,
         after,
+        inclusive,
         verbose,
         debug,
         count,
@@ -77,10 +79,12 @@ def cli(timestamps,
         if verbose:
             ic(index, timestamp)
         if after:
-            if not timestamp.compare(after):
+            #if not timestamp.compare(after):
+            if timestamp > after:
                 continue
         if before:
-            if timestamp.compare(before):
+            #if timestamp.compare(before):
+            if timestamp < before:
                 continue
 
         print(timestamp)
