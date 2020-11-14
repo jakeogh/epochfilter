@@ -78,6 +78,7 @@ def cli(timestamps,
         timestamp = decimal.Decimal(timestamp)
         if verbose:
             ic(index, timestamp)
+
         if after:
             result = timestamp.compare(after)
             if verbose:
