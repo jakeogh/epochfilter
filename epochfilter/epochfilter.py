@@ -22,7 +22,8 @@ import os
 import sys
 import time
 import click
-import decimal
+from decimal import InvalidOperation
+from decimal import Decimal
 import dateparser
 from icecream import ic
 from enumerate_input import enumerate_input
@@ -31,7 +32,7 @@ from enumerate_input import enumerate_input
 def human_date_to_timestamp(date):
     dt = dateparser.parse(date)
     timestamp = dt.timestamp()
-    return decimal.Decimal(str(timestamp))
+    return Decimal(str(timestamp))
 
 
 @click.command()
@@ -56,16 +57,16 @@ def cli(timestamps,
 
     if before:
         try:
-            before = decimal.Decimal(before)
-        except ValueError:
+            before = Decimal(before)
+        except InvalidOperation:
             before = human_date_to_timestamp(before)
     if after:
         try:
-            after = decimal.Decimal(after)
-        except ValueError:
+            after = Decimal(after)
+        except InvalidOperation:
             after = human_date_to_timestamp(after)
 
-    now = decimal.Decimal(time.time())
+    now = Decimal(time.time())
 
     if verbose:
         ic(before, after, now)
@@ -75,14 +76,14 @@ def cli(timestamps,
                                             debug=debug,
                                             verbose=verbose):
 
-        timestamp = decimal.Decimal(timestamp)
+        timestamp = Decimal(timestamp)
         if verbose:
             ic(index, timestamp)
 
         if after:
-            acceptable_results = [decimal.Decimal('1')]
+            acceptable_results = [Decimal('1')]
             if inclusive:
-                acceptable_results.append(decimal.Decimal('0'))
+                acceptable_results.append(Decimal('0'))
             if verbose:
                 ic(acceptable_results)
             result = timestamp.compare(after)
@@ -92,9 +93,9 @@ def cli(timestamps,
                 continue
 
         if before:
-            acceptable_results = [decimal.Decimal('-1')]
+            acceptable_results = [Decimal('-1')]
             if inclusive:
-                acceptable_results.append(decimal.Decimal('0'))
+                acceptable_results.append(Decimal('0'))
             if verbose:
                 ic(acceptable_results)
             result = timestamp.compare(after)
@@ -109,5 +110,4 @@ def cli(timestamps,
             if count > (index + 1):
                 ic(count)
                 sys.exit(0)
-
 
