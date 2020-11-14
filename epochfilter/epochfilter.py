@@ -73,7 +73,7 @@ def cli(timestamps,
                                             debug=debug,
                                             verbose=verbose):
 
-        timestamp = decimal.decimal(timestamp)
+        timestamp = decimal.Decimal(timestamp)
         if verbose:
             ic(index, timestamp)
         if count:
