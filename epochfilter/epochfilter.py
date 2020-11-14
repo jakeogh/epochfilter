@@ -60,7 +60,8 @@ def cli(timestamps,
     if sys.stdout.isatty():
         end = '\n'
         if verbose:
-            ic(sys.stdout.isatty())
+            #ic(sys.stdout.isatty())
+            ic(end)
 
     if before:
         try:
