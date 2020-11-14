@@ -82,7 +82,12 @@ def cli(timestamps,
             result = timestamp.compare(after)
             if verbose:
                 ic(result)
+            if result is decimal.Decimal('-1'):
                 continue
+            if inclusive:
+                if result is not decimal.Decimal('0'):
+                    continue
+
         if before:
             result = timestamp.compare(before)
             if verbose:
