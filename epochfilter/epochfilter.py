@@ -80,7 +80,7 @@ def cli(timestamps,
             ic(index, timestamp)
 
         if after:
-            acceptable_results = [decimal.Decimal('-1')]
+            acceptable_results = [decimal.Decimal('1')]
             if inclusive:
                 acceptable_results.append(decimal.Decimal('0'))
             if verbose:
