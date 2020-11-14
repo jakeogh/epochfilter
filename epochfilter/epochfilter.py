@@ -79,6 +79,9 @@ def cli(timestamps,
         if after:
             if not timestamp.compare(after):
                 continue
+        if before:
+            if timestamp.compare(before):
+                continue
 
         print(timestamp)
 
