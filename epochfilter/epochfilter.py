@@ -99,7 +99,7 @@ def cli(timestamps,
                 acceptable_results.append(Decimal('0'))
             if verbose:
                 ic(acceptable_results)
-            result = timestamp.compare(after)
+            result = timestamp.compare(before)
             if verbose:
                 ic(result)
             if result not in acceptable_results:
