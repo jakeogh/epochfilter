@@ -59,6 +59,8 @@ def cli(timestamps,
         end = '\0'
     if sys.stdout.isatty():
         end = '\n'
+        if verbose:
+            ic(sys.stdout.isatty())
 
     if before:
         try:
@@ -83,17 +85,17 @@ def cli(timestamps,
                                             verbose=verbose):
 
         timestamp = Decimal(timestamp)
-        if verbose:
+        if debug:
             ic(index, timestamp)
 
         if after:
             acceptable_results = [Decimal('1')]
             if inclusive:
                 acceptable_results.append(Decimal('0'))
-            if verbose:
+            if debug:
                 ic(acceptable_results)
             result = timestamp.compare(after)
-            if verbose:
+            if debug:
                 ic(result)
             if result not in acceptable_results:
                 continue
@@ -102,10 +104,10 @@ def cli(timestamps,
             acceptable_results = [Decimal('-1')]
             if inclusive:
                 acceptable_results.append(Decimal('0'))
-            if verbose:
+            if debug:
                 ic(acceptable_results)
             result = timestamp.compare(before)
-            if verbose:
+            if debug:
                 ic(result)
             if result not in acceptable_results:
                 continue
