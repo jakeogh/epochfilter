@@ -54,6 +54,11 @@ def cli(timestamps,
         printn,):
 
     null = not printn
+    end = '\n'
+    if null:
+        end = '\0'
+    if sys.stdout.isatty():
+        end = '\n'
 
     if before:
         try:
@@ -105,7 +110,7 @@ def cli(timestamps,
             if result not in acceptable_results:
                 continue
 
-        print(timestamp)
+        print(timestamp, end=end)
 
         if count:
             if count > (index + 1):
