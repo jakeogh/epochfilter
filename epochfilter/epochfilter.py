@@ -59,9 +59,9 @@ def cli(timestamps,
         end = '\0'
     if sys.stdout.isatty():
         end = '\n'
-        if verbose:
-            #ic(sys.stdout.isatty())
-            ic(end)
+    if verbose:
+        #ic(sys.stdout.isatty())
+        ic(end)
 
     if before:
         try:
