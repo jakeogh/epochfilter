@@ -60,6 +60,7 @@ def cli(timestamps,
             before = Decimal(before)
         except InvalidOperation:
             before = human_date_to_timestamp(before)
+
     if after:
         try:
             after = Decimal(after)
