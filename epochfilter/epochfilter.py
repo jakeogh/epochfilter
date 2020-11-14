@@ -79,12 +79,14 @@ def cli(timestamps,
         if verbose:
             ic(index, timestamp)
         if after:
-            #if not timestamp.compare(after):
-            if timestamp > after:
+            result = timestamp.compare(after)
+            if verbose:
+                ic(result)
                 continue
         if before:
-            #if timestamp.compare(before):
-            if timestamp < before:
+            result = timestamp.compare(before)
+            if verbose:
+                ic(result)
                 continue
 
         print(timestamp)
