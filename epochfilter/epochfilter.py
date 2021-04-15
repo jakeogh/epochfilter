@@ -21,12 +21,13 @@
 import os
 import sys
 import time
-import click
-from decimal import InvalidOperation
 from decimal import Decimal
+from decimal import InvalidOperation
+
+import click
 import dateparser
-from icecream import ic
 from enumerate_input import enumerate_input
+from icecream import ic
 
 
 def human_date_to_timestamp(date):
@@ -45,13 +46,14 @@ def human_date_to_timestamp(date):
 @click.option("--inclusive", is_flag=True)
 @click.option("--printn", is_flag=True)
 def cli(timestamps,
-        before,
-        after,
-        inclusive,
-        verbose,
-        debug,
-        count,
-        printn,):
+        before: str,
+        after: str,
+        inclusive: bool,
+        verbose: bool,
+        debug: bool,
+        count: bool,
+        printn: bool,
+        ):
 
     null = not printn
     end = '\n'
@@ -82,6 +84,9 @@ def cli(timestamps,
 
     for index, timestamp in enumerate_input(iterator=timestamps,
                                             null=null,
+                                            skip=None,
+                                            head=None,
+                                            tail=None,
                                             debug=debug,
                                             verbose=verbose):
 
