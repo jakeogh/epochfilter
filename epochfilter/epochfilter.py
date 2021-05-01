@@ -43,6 +43,8 @@ def human_date_to_timestamp(date):
 @click.option('--count', type=str)
 @click.option('--before', type=str)
 @click.option('--after', type=str)
+@click.option('--oldest', type=str)
+@click.option('--newest', type=str)
 @click.option("--inclusive", is_flag=True)
 @click.option("--printn", is_flag=True)
 def cli(timestamps,
@@ -52,6 +54,8 @@ def cli(timestamps,
         verbose: bool,
         debug: bool,
         count: bool,
+        oldest: bool,
+        newest: bool,
         printn: bool,
         ):
 
@@ -64,6 +68,9 @@ def cli(timestamps,
     if verbose:
         #ic(sys.stdout.isatty())
         ic(end)
+
+    if verbose:
+        ic(before, after)
 
     if before:
         try:
