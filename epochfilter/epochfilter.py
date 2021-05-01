@@ -114,7 +114,7 @@ def cli(timestamps,
             acceptable_results = [Decimal('1')]
             if inclusive:
                 acceptable_results.append(Decimal('0'))
-            if debug or verbose:
+            if debug:
                 ic(acceptable_results)
             result = timestamp.compare(after)
             if debug:
@@ -126,7 +126,7 @@ def cli(timestamps,
             acceptable_results = [Decimal('-1')]
             if inclusive:
                 acceptable_results.append(Decimal('0'))
-            if debug or verbose:
+            if debug:
                 ic(acceptable_results)
             result = timestamp.compare(before)
             if debug:
