@@ -47,13 +47,13 @@ def timestamp_to_human_date(timestamp):
 @click.argument("timestamps", type=str, nargs=-1)
 @click.option('--verbose', is_flag=True)
 @click.option('--debug', is_flag=True)
-@click.option('--count', type=str)
 @click.option('--before', type=str)
 @click.option('--after', type=str)
 @click.option('--oldest', type=str)
 @click.option('--newest', type=str)
 @click.option("--inclusive", is_flag=True)
 @click.option("--human", is_flag=True)
+@click.option("--exit-after-matches", type=int)
 @click.option("--printn", is_flag=True)
 def cli(timestamps,
         before: str,
@@ -61,11 +61,11 @@ def cli(timestamps,
         inclusive: bool,
         verbose: bool,
         debug: bool,
-        count: bool,
         oldest: bool,
         newest: bool,
         human: bool,
         printn: bool,
+        exit_after_matches: int,
         ):
 
     null = not printn
@@ -97,6 +97,8 @@ def cli(timestamps,
 
     #if verbose:
     ic(before, after, now)
+
+    match_count = 0
 
     for index, timestamp in enumerate_input(iterator=timestamps,
                                             null=null,
@@ -134,8 +136,6 @@ def cli(timestamps,
             if result not in acceptable_results:
                 continue
 
-
-
         if human:
             human_date = timestamp_to_human_date(timestamp)
             if verbose:
@@ -145,8 +145,8 @@ def cli(timestamps,
         else:
             print(timestamp, end=end)
 
-        if count:
-            if count > (index + 1):
-                ic(count)
+        match_count += 1
+        if exit_after_matches:
+            if match_count >= exit_after_matches:
                 sys.exit(0)
 
