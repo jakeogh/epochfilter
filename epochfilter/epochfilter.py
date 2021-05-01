@@ -21,6 +21,7 @@
 import os
 import sys
 import time
+from datetime import datetime
 from decimal import Decimal
 from decimal import InvalidOperation
 
@@ -36,6 +37,12 @@ def human_date_to_timestamp(date):
     return Decimal(str(timestamp))
 
 
+def timestamp_to_human_date(timestamp):
+    timestamp = Decimal(str(timestamp))
+    human_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S %Z')
+    return human_date
+
+
 @click.command()
 @click.argument("timestamps", type=str, nargs=-1)
 @click.option('--verbose', is_flag=True)
@@ -46,6 +53,7 @@ def human_date_to_timestamp(date):
 @click.option('--oldest', type=str)
 @click.option('--newest', type=str)
 @click.option("--inclusive", is_flag=True)
+@click.option("--human", is_flag=True)
 @click.option("--printn", is_flag=True)
 def cli(timestamps,
         before: str,
@@ -56,6 +64,7 @@ def cli(timestamps,
         count: bool,
         oldest: bool,
         newest: bool,
+        human: bool,
         printn: bool,
         ):
 
@@ -86,8 +95,8 @@ def cli(timestamps,
 
     now = Decimal(time.time())
 
-    if verbose:
-        ic(before, after, now)
+    #if verbose:
+    ic(before, after, now)
 
     for index, timestamp in enumerate_input(iterator=timestamps,
                                             null=null,
@@ -125,7 +134,11 @@ def cli(timestamps,
             if result not in acceptable_results:
                 continue
 
-        print(timestamp, end=end)
+        if human:
+            human_date = timestamp_to_human_date(timestamp)
+            print(human_date, end=end)
+        else:
+            print(timestamp, end=end)
 
         if count:
             if count > (index + 1):
