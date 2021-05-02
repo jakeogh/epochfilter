@@ -106,6 +106,7 @@ def print_result(*,
 @click.option('--debug', is_flag=True)
 @click.option('--before', type=str)
 @click.option('--after', type=str)
+@click.option('--within', type=str)
 @click.option('--oldest', is_flag=True)
 @click.option('--newest', is_flag=True)
 @click.option("--inclusive", is_flag=True)
@@ -115,6 +116,7 @@ def print_result(*,
 def cli(timestamps,
         before: str,
         after: str,
+        within: str,
         inclusive: bool,
         verbose: bool,
         debug: bool,
@@ -150,7 +152,14 @@ def cli(timestamps,
         except InvalidOperation:
             after = human_date_to_timestamp(after)
 
+    if within:
+        #todo
+        pass
+
+
     now = Decimal(time.time())
+
+
 
     if (before or after):
         ic(before, after, now)
