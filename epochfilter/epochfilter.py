@@ -200,7 +200,8 @@ def cli(timestamps,
                             debug=debug,):
                     current_newest = timestamp
                     if verbose:
-                        ic(current_newest)
+                        current_newest_human = timestamp_to_human_date(current_newest)
+                        ic(current_newest, current_newest_human)
 
         if oldest:
             if not current_oldest:
@@ -215,7 +216,8 @@ def cli(timestamps,
                              debug=debug,):
                     current_oldest = timestamp
                     if verbose:
-                        ic(current_oldest)
+                        current_oldest_human = timestamp_to_human_date(current_oldest)
+                        ic(current_oldest, current_oldest_human)
 
         if not (newest or oldest):
             print_result(timestamp=timestamp,
