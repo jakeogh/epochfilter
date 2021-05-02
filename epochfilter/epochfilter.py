@@ -178,16 +178,6 @@ def cli(timestamps,
                             verbose=verbose,
                             debug=debug,):
                 continue
-            #acceptable_results = [Decimal('1')]
-            #if inclusive:
-            #    acceptable_results.append(Decimal('0'))
-            #if debug:
-            #    ic(acceptable_results)
-            #result = timestamp.compare(after)
-            #if debug:
-            #    ic(result)
-            #if result not in acceptable_results:
-            #    continue
 
         if before:
             if not is_before(timestamp=timestamp,
@@ -196,16 +186,6 @@ def cli(timestamps,
                              verbose=verbose,
                              debug=debug,):
                 continue
-            #acceptable_results = [Decimal('-1')]
-            #if inclusive:
-            #    acceptable_results.append(Decimal('0'))
-            #if debug:
-            #    ic(acceptable_results)
-            #result = timestamp.compare(before)
-            #if debug:
-            #    ic(result)
-            #if result not in acceptable_results:
-            #    continue
 
         if newest:
             if not current_newest:
@@ -222,20 +202,27 @@ def cli(timestamps,
                 if verbose:
                     ic(current_newest)
 
+        if oldest:
+            if not current_oldest:
+                current_oldest = timestamp
+                if verbose:
+                    ic(current_oldest)
+            else:
+                if is_after(timestamp=timestamp,
+                            after=current_oldest,
+                            inclusive=False,
+                            verbose=verbose,
+                            debug=debug,):
+                    current_oldest = timestamp
+                if verbose:
+                    ic(current_oldest)
+
         if not (newest or oldest):
             print_result(timestamp=timestamp,
                          human=human,
                          end=end,
                          verbose=verbose,
                          debug=debug,)
-            #if human:
-            #    human_date = timestamp_to_human_date(timestamp)
-            #    if verbose:
-            #        print(timestamp, human_date, end=end)
-            #    else:
-            #        print(human_date, end=end)
-            #else:
-            #    print(timestamp, end=end)
 
         match_count += 1
         if exit_after_matches:
