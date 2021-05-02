@@ -83,6 +83,23 @@ def is_after(*,
     return True
 
 
+def print_result(*,
+                 timestamp,
+                 human: bool,
+                 end: str,
+                 verbose: bool,
+                 debug: bool,
+                 ):
+    if human:
+        human_date = timestamp_to_human_date(timestamp)
+        if verbose:
+            print(timestamp, human_date, end=end)
+        else:
+            print(human_date, end=end)
+    else:
+        print(timestamp, end=end)
+
+
 @click.command()
 @click.argument("timestamps", type=str, nargs=-1)
 @click.option('--verbose', is_flag=True)
@@ -190,7 +207,6 @@ def cli(timestamps,
             #if result not in acceptable_results:
             #    continue
 
-
         if newest:
             if not current_newest:
                 current_newest = timestamp
@@ -206,18 +222,37 @@ def cli(timestamps,
                 if verbose:
                     ic(current_newest)
 
-
-        if human:
-            human_date = timestamp_to_human_date(timestamp)
-            if verbose:
-                print(timestamp, human_date, end=end)
-            else:
-                print(human_date, end=end)
-        else:
-            print(timestamp, end=end)
+        if not (newest or oldest):
+            print_result(timestamp=timestamp,
+                         human=human,
+                         end=end,
+                         verbose=verbose,
+                         debug=debug,)
+            #if human:
+            #    human_date = timestamp_to_human_date(timestamp)
+            #    if verbose:
+            #        print(timestamp, human_date, end=end)
+            #    else:
+            #        print(human_date, end=end)
+            #else:
+            #    print(timestamp, end=end)
 
         match_count += 1
         if exit_after_matches:
             if match_count >= exit_after_matches:
                 sys.exit(0)
+
+    if (newest or oldest):
+        if newest:
+            print_result(timestamp=current_newest,
+                         human=human,
+                         end=end,
+                         verbose=verbose,
+                         debug=debug,)
+        if oldest:
+            print_result(timestamp=current_oldest,
+                         human=human,
+                         end=end,
+                         verbose=verbose,
+                         debug=debug,)
 
