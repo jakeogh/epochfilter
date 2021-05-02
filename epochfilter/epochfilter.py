@@ -43,6 +43,26 @@ def timestamp_to_human_date(timestamp):
     return human_date
 
 
+def is_before(*,
+              timestamp: Decimal,
+              before: Decimal,
+              inclusive: bool,
+              verbose: bool,
+              debug: bool,
+              ):
+    acceptable_results = [Decimal('-1')]
+    if inclusive:
+        acceptable_results.append(Decimal('0'))
+    if debug:
+        ic(acceptable_results)
+    result = timestamp.compare(before)
+    if debug:
+        ic(result)
+    if result not in acceptable_results:
+        return False
+    return True
+
+
 @click.command()
 @click.argument("timestamps", type=str, nargs=-1)
 @click.option('--verbose', is_flag=True)
@@ -125,16 +145,22 @@ def cli(timestamps,
                 continue
 
         if before:
-            acceptable_results = [Decimal('-1')]
-            if inclusive:
-                acceptable_results.append(Decimal('0'))
-            if debug:
-                ic(acceptable_results)
-            result = timestamp.compare(before)
-            if debug:
-                ic(result)
-            if result not in acceptable_results:
+            if not is_before(timestamp=timestamp,
+                             before=before,
+                             inclusive=inclusive,
+                             verbose=verbose,
+                             debug=debug,):
                 continue
+            #acceptable_results = [Decimal('-1')]
+            #if inclusive:
+            #    acceptable_results.append(Decimal('0'))
+            #if debug:
+            #    ic(acceptable_results)
+            #result = timestamp.compare(before)
+            #if debug:
+            #    ic(result)
+            #if result not in acceptable_results:
+            #    continue
 
         if human:
             human_date = timestamp_to_human_date(timestamp)
