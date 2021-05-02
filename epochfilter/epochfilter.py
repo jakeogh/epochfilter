@@ -63,6 +63,26 @@ def is_before(*,
     return True
 
 
+def is_after(*,
+             timestamp: Decimal,
+             after: Decimal,
+             inclusive: bool,
+             verbose: bool,
+             debug: bool,
+             ):
+    acceptable_results = [Decimal('1')]
+    if inclusive:
+        acceptable_results.append(Decimal('0'))
+    if debug:
+        ic(acceptable_results)
+    result = timestamp.compare(after)
+    if debug:
+        ic(result)
+    if result not in acceptable_results:
+        return False
+    return True
+
+
 @click.command()
 @click.argument("timestamps", type=str, nargs=-1)
 @click.option('--verbose', is_flag=True)
@@ -120,6 +140,8 @@ def cli(timestamps,
 
     match_count = 0
 
+    current_newest = None
+    current_oldest = None
     for index, timestamp in enumerate_input(iterator=timestamps,
                                             null=null,
                                             skip=None,
@@ -133,16 +155,22 @@ def cli(timestamps,
             ic(index, timestamp)
 
         if after:
-            acceptable_results = [Decimal('1')]
-            if inclusive:
-                acceptable_results.append(Decimal('0'))
-            if debug:
-                ic(acceptable_results)
-            result = timestamp.compare(after)
-            if debug:
-                ic(result)
-            if result not in acceptable_results:
+            if not is_after(timestamp=timestamp,
+                            after=after,
+                            inclusive=inclusive,
+                            verbose=verbose,
+                            debug=debug,):
                 continue
+            #acceptable_results = [Decimal('1')]
+            #if inclusive:
+            #    acceptable_results.append(Decimal('0'))
+            #if debug:
+            #    ic(acceptable_results)
+            #result = timestamp.compare(after)
+            #if debug:
+            #    ic(result)
+            #if result not in acceptable_results:
+            #    continue
 
         if before:
             if not is_before(timestamp=timestamp,
@@ -161,6 +189,23 @@ def cli(timestamps,
             #    ic(result)
             #if result not in acceptable_results:
             #    continue
+
+
+        if newest:
+            if not current_newest:
+                current_newest = timestamp
+                if verbose:
+                    ic(current_newest)
+            else:
+                if is_after(timestamp=timestamp,
+                            after=current_newest,
+                            inclusive=False,
+                            verbose=verbose,
+                            debug=debug,):
+                    current_newest = timestamp
+                if verbose:
+                    ic(current_newest)
+
 
         if human:
             human_date = timestamp_to_human_date(timestamp)
