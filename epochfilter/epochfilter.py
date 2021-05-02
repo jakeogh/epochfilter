@@ -208,11 +208,11 @@ def cli(timestamps,
                 if verbose:
                     ic(current_oldest)
             else:
-                if is_after(timestamp=timestamp,
-                            after=current_oldest,
-                            inclusive=False,
-                            verbose=verbose,
-                            debug=debug,):
+                if is_before(timestamp=timestamp,
+                             before=current_oldest,
+                             inclusive=False,
+                             verbose=verbose,
+                             debug=debug,):
                     current_oldest = timestamp
                 if verbose:
                     ic(current_oldest)
