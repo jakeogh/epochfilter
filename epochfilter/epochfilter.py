@@ -167,7 +167,13 @@ def cli(timestamps,
                                             debug=debug,
                                             verbose=verbose):
 
-        timestamp = Decimal(timestamp)
+        try:
+            timestamp = Decimal(timestamp)
+        except InvalidOperation as e:
+            ic(e)
+            ic(timestamp)
+            import IPython; IPython.embed()
+
         if debug:
             ic(index, timestamp)
 
