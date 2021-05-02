@@ -152,8 +152,8 @@ def cli(timestamps,
 
     now = Decimal(time.time())
 
-    #if verbose:
-    ic(before, after, now)
+    if (before or after):
+        ic(before, after, now)
 
     match_count = 0
 
