@@ -199,8 +199,8 @@ def cli(timestamps,
                             verbose=verbose,
                             debug=debug,):
                     current_newest = timestamp
-                if verbose:
-                    ic(current_newest)
+                    if verbose:
+                        ic(current_newest)
 
         if oldest:
             if not current_oldest:
@@ -214,8 +214,8 @@ def cli(timestamps,
                              verbose=verbose,
                              debug=debug,):
                     current_oldest = timestamp
-                if verbose:
-                    ic(current_oldest)
+                    if verbose:
+                        ic(current_oldest)
 
         if not (newest or oldest):
             print_result(timestamp=timestamp,
