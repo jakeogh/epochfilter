@@ -172,7 +172,10 @@ def cli(timestamps,
         except InvalidOperation as e:
             ic(e)
             ic(index, timestamp)
-            import IPython; IPython.embed()
+            #import IPython; IPython.embed()
+            if timestamp == '':
+                continue
+            raise e
 
         if debug:
             ic(index, timestamp)
