@@ -171,7 +171,7 @@ def cli(timestamps,
             timestamp = Decimal(timestamp)
         except InvalidOperation as e:
             ic(e)
-            ic(timestamp)
+            ic(index, timestamp)
             import IPython; IPython.embed()
 
         if debug:
@@ -197,7 +197,8 @@ def cli(timestamps,
             if not current_newest:
                 current_newest = timestamp
                 if verbose:
-                    ic(current_newest)
+                    current_newest_human = timestamp_to_human_date(current_newest)
+                    ic(current_newest, current_newest_human)
             else:
                 if is_after(timestamp=timestamp,
                             after=current_newest,
@@ -213,7 +214,8 @@ def cli(timestamps,
             if not current_oldest:
                 current_oldest = timestamp
                 if verbose:
-                    ic(current_oldest)
+                    current_oldest_human = timestamp_to_human_date(current_oldest)
+                    ic(current_oldest, current_oldest_human)
             else:
                 if is_before(timestamp=timestamp,
                              before=current_oldest,
