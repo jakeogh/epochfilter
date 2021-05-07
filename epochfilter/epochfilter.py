@@ -180,7 +180,7 @@ def cli(timestamps,
                                        verbose=verbose,
                                        debug=debug,)
             ic(within_converted)
-            within = within_converted.magnitude
+            within = Decimal(within_converted.magnitude)
             ic(within)
 
         # at this point, before and after need to be configured
