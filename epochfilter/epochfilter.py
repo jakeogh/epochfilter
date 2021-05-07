@@ -156,7 +156,7 @@ def cli(timestamps,
     if within is not None:
         try:
             within = int(within)
-        except TypeError:
+        except ValueError:
             within_converted = convert(human_input_units=within,
                                        human_output_unit="seconds",
                                        verbose=verbose,
