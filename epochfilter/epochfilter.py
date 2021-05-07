@@ -27,6 +27,7 @@ from decimal import InvalidOperation
 
 import click
 import dateparser
+from asserttool import maxone
 from enumerate_input import enumerate_input
 from icecream import ic
 from unitcalc import convert
@@ -107,6 +108,7 @@ def print_result(*,
 @click.option('--debug', is_flag=True)
 @click.option('--before', type=str)
 @click.option('--after', type=str)
+@click.option('--around', type=str)
 @click.option('--within', type=str)
 @click.option('--oldest', is_flag=True)
 @click.option('--newest', is_flag=True)
@@ -117,6 +119,7 @@ def print_result(*,
 def cli(timestamps,
         before: str,
         after: str,
+        around: str,
         within: str,
         inclusive: bool,
         verbose: bool,
@@ -141,21 +144,36 @@ def cli(timestamps,
     if verbose:
         ic(before, after)
 
-    if before:
+    if within is not None:
+        maxone([before, after, around], msg='--within requires one of --before/--after/--around')
+
+    if around is not None:
+        if within is None:
+            raise ValueError('--around requires --within')
+        if (before is not None) or (after is not None):
+            raise ValueError('--around can not be used with --before/--after')
+
+    if before is not None:
         try:
             before = Decimal(before)
         except InvalidOperation:
             before = human_date_to_timestamp(before)
 
-    if after:
+    if after is not None:
         try:
             after = Decimal(after)
         except InvalidOperation:
             after = human_date_to_timestamp(after)
 
+    if around is not None:
+        try:
+            around = Decimal(around)
+        except InvalidOperation:
+            around = human_date_to_timestamp(around)
+
     if within is not None:
         try:
-            within = int(within)
+            within = Decimal(within)
         except ValueError:
             within_converted = convert(human_input_units=within,
                                        human_output_unit="seconds",
@@ -165,12 +183,18 @@ def cli(timestamps,
             within = within_converted.magnitude
             ic(within)
 
+        # at this point, before and after need to be configured
+        assert before is None
+        assert after is None
+
+        after = around - within
+        before = around + within
+        ic(after, before)
+
     now = Decimal(time.time())
 
-
-
-    if (before or after):
-        ic(before, after, now)
+    if (before or after or within):
+        ic(before, after, within, now)
 
     match_count = 0
 
