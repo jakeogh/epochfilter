@@ -29,6 +29,7 @@ import click
 import dateparser
 from enumerate_input import enumerate_input
 from icecream import ic
+from unitcalc import convert
 
 
 def human_date_to_timestamp(date):
@@ -152,10 +153,17 @@ def cli(timestamps,
         except InvalidOperation:
             after = human_date_to_timestamp(after)
 
-    if within:
-        #todo
-        pass
-
+    if within is not None:
+        try:
+            within = int(within)
+        except TypeError:
+            within_converted = convert(human_input_units=within,
+                                       human_output_unit="seconds",
+                                       verbose=verbose,
+                                       debug=debug,)
+            ic(within_converted)
+            within = within_converted.magnitude
+            ic(within)
 
     now = Decimal(time.time())
 
