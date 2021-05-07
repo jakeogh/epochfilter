@@ -174,7 +174,7 @@ def cli(timestamps,
     if within is not None:
         try:
             within = Decimal(within)
-        except ValueError:
+        except InvalidOperation:
             within_converted = convert(human_input_units=within,
                                        human_output_unit="seconds",
                                        verbose=verbose,
