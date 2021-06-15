@@ -18,19 +18,145 @@
 # pylint: disable=R0916  # Too many boolean expressions in if statement
 
 
+import errno
 import os
+import signal
 import sys
 import time
 from datetime import datetime
 from decimal import Decimal
 from decimal import InvalidOperation
+from functools import wraps
 
 import click
 import dateparser
 from asserttool import maxone
+from asserttool import verify
 from enumerate_input import enumerate_input
-from icecream import ic
+from humanize import naturaldelta
+from humanize import naturaltime
 from unitcalc import convert
+
+
+def eprint(*args, **kwargs):
+    if 'file' in kwargs.keys():
+        kwargs.pop('file')
+    print(*args, file=sys.stderr, **kwargs)
+
+
+try:
+    from icecream import ic  # https://github.com/gruns/icecream
+    from icecream import icr  # https://github.com/jakeogh/icecream
+except ImportError:
+    ic = eprint
+    icr = eprint
+
+
+def timestamp_now():
+    stamp = str("%.22f" % time.time())
+    return stamp
+
+
+def timestamp_to_epoch(date_time):
+    #date_time = '2016-03-14T18:54:56.1942132'.split('.')[0]
+    date_time = date_time.split('.')[0]
+    pattern = '%Y-%m-%dT%H:%M:%S'
+    epoch = int(time.mktime(time.strptime(date_time, pattern)))
+    return epoch
+
+
+def timeit(f):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = f(*args, **kw)
+        te = time.time()
+        print('func:%r args:[%r, %r] took: %2.4f sec' % (f.__name__, args, kw, te-ts))
+        return result
+    return timed
+
+
+def get_mtime(infile):
+    mtime = os.lstat(infile).st_mtime #does not follow symlinks
+    return mtime
+
+
+def get_amtime(infile):
+    try:
+        infile_stat = os.lstat(infile)
+    except TypeError:
+        infile_stat = os.lstat(infile.fileno())
+    amtime = (infile_stat.st_atime_ns, infile_stat.st_mtime_ns)
+    return amtime
+
+
+def update_mtime_if_older(*, path, mtime, verbose, debug):
+    verify(isinstance(mtime, tuple))
+    verify(isinstance(mtime[0], int))
+    verify(isinstance(mtime[1], int))
+    current_mtime = get_amtime(path)
+    if current_mtime[1] > mtime[1]:
+        if verbose:
+            eprint("{} old: {} new: {}".format(path, current_mtime[1], mtime[1]))
+        os.utime(path, ns=mtime, follow_symlinks=False)
+
+
+def timeout(seconds, error_message=os.strerror(errno.ETIME)):
+    def decorator(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+            return result
+
+        return wraps(func)(wrapper)
+
+    return decorator
+
+
+# in epochfilter
+#def human_date_to_timestamp(date):
+#    dt = dateparser(date)
+#    return dt.timestamp()
+
+
+def seconds_duration_to_human_readable(seconds, ago):
+    if seconds is None:
+        return None
+    seconds = float(seconds)
+    if ago:
+        result = naturaltime(seconds)
+    else:
+        result = naturaldelta(seconds)
+
+    result = result.replace(" seconds", "s")
+    result = result.replace("a second", "1s")
+
+    result = result.replace(" minutes", "min")
+    result = result.replace("a minute", "1min")
+
+    result = result.replace(" hours", "hr")
+    result = result.replace("an hour", "1hr")
+
+    result = result.replace(" days", "days")
+    result = result.replace("a day", "1day")
+
+    result = result.replace(" months", "mo")
+    result = result.replace("a month", "1mo")
+
+    result = result.replace(" years", "yrs")
+    result = result.replace("a year", "1yr")
+    result = result.replace("1 year", "1yr")
+
+    result = result.replace(" ago", "_ago")
+    result = result.replace(", ", ",")
+    return result
+
 
 
 def human_date_to_timestamp(date):
