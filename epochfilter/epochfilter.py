@@ -27,10 +27,15 @@ from datetime import datetime
 from decimal import Decimal
 from decimal import InvalidOperation
 from functools import wraps
+from pathlib import Path
 
 import click
 import dateparser
+from asserttool import eprint
+from asserttool import ic
+from asserttool import icr
 from asserttool import maxone
+from asserttool import nevd
 from asserttool import verify
 from enumerate_input import enumerate_input
 from humanize import naturaldelta
@@ -38,26 +43,12 @@ from humanize import naturaltime
 from unitcalc import convert
 
 
-def eprint(*args, **kwargs):
-    if 'file' in kwargs.keys():
-        kwargs.pop('file')
-    print(*args, file=sys.stderr, **kwargs)
-
-
-try:
-    from icecream import ic  # https://github.com/gruns/icecream
-    from icecream import icr  # https://github.com/jakeogh/icecream
-except ImportError:
-    ic = eprint
-    icr = eprint
-
-
 def timestamp_now():
     stamp = str("%.22f" % time.time())
     return stamp
 
 
-def timestamp_to_epoch(date_time):
+def timestamp_to_epoch(date_time: str):
     #date_time = '2016-03-14T18:54:56.1942132'.split('.')[0]
     date_time = date_time.split('.')[0]
     pattern = '%Y-%m-%dT%H:%M:%S'
@@ -76,7 +67,7 @@ def timeit(f):
 
 
 def get_mtime(infile):
-    mtime = os.lstat(infile).st_mtime #does not follow symlinks
+    mtime = os.lstat(infile).st_mtime  # does not follow symlinks
     return mtime
 
 
@@ -89,14 +80,19 @@ def get_amtime(infile):
     return amtime
 
 
-def update_mtime_if_older(*, path, mtime, verbose, debug):
+def update_mtime_if_older(*,
+                          path: Path,
+                          mtime: tuple[int, int],
+                          verbose: bool,
+                          debug: bool,
+                          ):
     verify(isinstance(mtime, tuple))
     verify(isinstance(mtime[0], int))
     verify(isinstance(mtime[1], int))
     current_mtime = get_amtime(path)
     if current_mtime[1] > mtime[1]:
         if verbose:
-            eprint("{} old: {} new: {}".format(path, current_mtime[1], mtime[1]))
+            eprint("{} old: {} new: {}".format(path.as_posix(), current_mtime[1], mtime[1]))
         os.utime(path, ns=mtime, follow_symlinks=False)
 
 
@@ -158,14 +154,13 @@ def seconds_duration_to_human_readable(seconds, ago):
     return result
 
 
-
 def human_date_to_timestamp(date):
     dt = dateparser.parse(date)
     timestamp = dt.timestamp()
     return Decimal(str(timestamp))
 
 
-def timestamp_to_human_date(timestamp):
+def timestamp_to_human_date(timestamp: str):
     timestamp = Decimal(str(timestamp))
     human_date = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S %Z')
     return human_date
@@ -242,7 +237,10 @@ def print_result(*,
 @click.option("--human", is_flag=True)
 @click.option("--exit-after-matches", type=int)
 @click.option("--printn", is_flag=True)
-def cli(timestamps,
+@click.pass_context
+def cli(ctx,
+        *,
+        timestamps,
         before: str,
         after: str,
         around: str,
@@ -257,15 +255,11 @@ def cli(timestamps,
         exit_after_matches: int,
         ):
 
-    null = not printn
-    end = '\n'
-    if null:
-        end = '\0'
-    if sys.stdout.isatty():
-        end = '\n'
-    if verbose:
-        #ic(sys.stdout.isatty())
-        ic(end)
+    null, end, verbose, debug = nevd(ctx=ctx,
+                                     ipython=False,
+                                     verbose=verbose,
+                                     printn=False,
+                                     debug=debug,)
 
     if verbose:
         ic(before, after)
